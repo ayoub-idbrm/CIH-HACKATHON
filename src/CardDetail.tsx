@@ -42,6 +42,20 @@ export interface RentalData {
   payments: OwnerPayment[]; // history of money sent to owners
 }
 
+export interface Subscription {
+  id: string;
+  name: string;        // e.g. "Netflix"
+  plan?: string;       // e.g. "Premium"
+  amount: number;      // monthly cost in MAD
+  cycle: "monthly" | "yearly";
+  category: string;    // Streaming / Music / etc
+  color: string;       // brand color (#hex)
+  emoji: string;       // brand emoji/icon char
+  nextRenewal: string; // ISO date
+  active: boolean;     // currently subscribed
+  createdAt: string;
+}
+
 // Category presets per card type
 const CATEGORY_PRESETS: Record<string, { name: string; color: string; icon: string }[]> = {
   food: [
@@ -68,6 +82,14 @@ const CATEGORY_PRESETS: Record<string, { name: string; color: string; icon: stri
     { name: "Furniture", color: "#059669", icon: "🛋️" },
     { name: "Other", color: "#64748b", icon: "📦" },
   ],
+  subscriptions: [
+    { name: "Streaming", color: "#dc2626", icon: "🎬" },
+    { name: "Music", color: "#22c55e", icon: "🎵" },
+    { name: "Gaming", color: "#8b5cf6", icon: "🎮" },
+    { name: "Cloud Storage", color: "#0ea5e9", icon: "☁️" },
+    { name: "Software", color: "#f97316", icon: "💻" },
+    { name: "Other", color: "#64748b", icon: "📦" },
+  ],
   default: [
     { name: "Essential", color: "#1c3d72", icon: "⭐" },
     { name: "Leisure", color: "#f97316", icon: "🎉" },
@@ -91,6 +113,7 @@ export interface CardData {
   iconIndex: number;
   transactions: Transaction[];
   rental?: RentalData;
+  subscriptions?: Subscription[];
 }
 
 const CIHLogoSmall = () => (
@@ -129,16 +152,117 @@ interface CardDetailProps {
   onRentalUpdate?: (cardId: string, rental: RentalData) => void;
   onSendToOwner?: (cardId: string, amount: number, ownerName: string) => void;
   onResetHistory?: (cardId: string, period: "week" | "month" | "year" | "all") => void;
+  onSubscriptionsUpdate?: (cardId: string, subs: Subscription[]) => void;
+  onChargeSubscription?: (cardId: string, sub: Subscription) => void;
   username?: string;
 }
 
-export default function CardDetail({ card, isDark, onBack, onSpend, onRentalUpdate, onSendToOwner, onResetHistory, username }: CardDetailProps) {
+export default function CardDetail({ card, isDark, onBack, onSpend, onRentalUpdate, onSendToOwner, onResetHistory, onSubscriptionsUpdate, onChargeSubscription, username }: CardDetailProps) {
   const categories = getCategoriesForCard(card.title);
   const [spendAmount, setSpendAmount] = useState("");
   const [spendDesc, setSpendDesc] = useState("");
   const [spendCategory, setSpendCategory] = useState(categories[0].name);
   const [error, setError] = useState("");
   const isRenting = card.title.toLowerCase() === "renting";
+  const isSubscriptions = card.title.toLowerCase() === "subscriptions";
+
+  // Subscriptions state
+  const subscriptions: Subscription[] = card.subscriptions || [];
+  const [showAddSubModal, setShowAddSubModal] = useState(false);
+  const [newSubName, setNewSubName] = useState("");
+  const [newSubPlan, setNewSubPlan] = useState("");
+  const [newSubAmount, setNewSubAmount] = useState("");
+  const [newSubCycle, setNewSubCycle] = useState<"monthly" | "yearly">("monthly");
+  const [newSubCategory, setNewSubCategory] = useState("Streaming");
+  const [newSubColor, setNewSubColor] = useState("#dc2626");
+  const [newSubEmoji, setNewSubEmoji] = useState("🎬");
+  const [subError, setSubError] = useState("");
+
+  // Popular subscription presets
+  const SUB_PRESETS = [
+    { name: "Netflix", plan: "Premium", amount: 120, category: "Streaming", color: "#e50914", emoji: "🎬" },
+    { name: "Spotify", plan: "Premium", amount: 50, category: "Music", color: "#1db954", emoji: "🎵" },
+    { name: "Disney+", plan: "Standard", amount: 80, category: "Streaming", color: "#0c2461", emoji: "🏰" },
+    { name: "YouTube Premium", plan: "Individual", amount: 60, category: "Streaming", color: "#ff0000", emoji: "▶️" },
+    { name: "Apple Music", plan: "Individual", amount: 55, category: "Music", color: "#fc3c44", emoji: "🍎" },
+    { name: "Amazon Prime", plan: "Annual", amount: 35, category: "Streaming", color: "#00a8e1", emoji: "📦" },
+    { name: "PlayStation Plus", plan: "Essential", amount: 80, category: "Gaming", color: "#0070d1", emoji: "🎮" },
+    { name: "Xbox Game Pass", plan: "Ultimate", amount: 130, category: "Gaming", color: "#107c10", emoji: "🎯" },
+    { name: "iCloud", plan: "200GB", amount: 30, category: "Cloud Storage", color: "#1c79c0", emoji: "☁️" },
+    { name: "Google One", plan: "100GB", amount: 20, category: "Cloud Storage", color: "#4285f4", emoji: "💾" },
+    { name: "Adobe CC", plan: "All Apps", amount: 550, category: "Software", color: "#fa0f00", emoji: "🎨" },
+    { name: "Microsoft 365", plan: "Personal", amount: 70, category: "Software", color: "#d83b01", emoji: "📊" },
+  ];
+
+  const applyPreset = (preset: typeof SUB_PRESETS[0]) => {
+    setNewSubName(preset.name);
+    setNewSubPlan(preset.plan);
+    setNewSubAmount(String(preset.amount));
+    setNewSubCategory(preset.category);
+    setNewSubColor(preset.color);
+    setNewSubEmoji(preset.emoji);
+  };
+
+  const updateSubscriptions = (next: Subscription[]) => {
+    onSubscriptionsUpdate?.(card.id, next);
+  };
+
+  const handleAddSub = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubError("");
+    const amt = parseFloat(newSubAmount);
+    if (!newSubName.trim() || !amt || amt <= 0) {
+      setSubError("Please fill in name and a valid amount.");
+      return;
+    }
+    const sub: Subscription = {
+      id: `sub_${Date.now()}`,
+      name: newSubName.trim(),
+      plan: newSubPlan.trim() || undefined,
+      amount: amt,
+      cycle: newSubCycle,
+      category: newSubCategory,
+      color: newSubColor,
+      emoji: newSubEmoji,
+      nextRenewal: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+      active: true,
+      createdAt: new Date().toISOString(),
+    };
+    updateSubscriptions([...subscriptions, sub]);
+    // reset
+    setNewSubName(""); setNewSubPlan(""); setNewSubAmount("");
+    setNewSubCategory("Streaming"); setNewSubColor("#dc2626"); setNewSubEmoji("🎬");
+    setShowAddSubModal(false);
+  };
+
+  const toggleSubActive = (subId: string) => {
+    updateSubscriptions(
+      subscriptions.map((s) => (s.id === subId ? { ...s, active: !s.active } : s))
+    );
+  };
+
+  const deleteSub = (subId: string) => {
+    updateSubscriptions(subscriptions.filter((s) => s.id !== subId));
+  };
+
+  const chargeSub = (sub: Subscription) => {
+    if (card.amount < sub.amount) {
+      alert(`Insufficient balance. Need ${formatMoney(sub.amount)} MAD but only ${formatMoney(card.amount)} MAD available.`);
+      return;
+    }
+    onChargeSubscription?.(card.id, sub);
+    // Roll forward renewal
+    const nextDate = new Date();
+    nextDate.setDate(nextDate.getDate() + (sub.cycle === "monthly" ? 30 : 365));
+    updateSubscriptions(
+      subscriptions.map((s) => (s.id === sub.id ? { ...s, nextRenewal: nextDate.toISOString() } : s))
+    );
+  };
+
+  const monthlyTotal = subscriptions
+    .filter((s) => s.active)
+    .reduce((sum, s) => sum + (s.cycle === "monthly" ? s.amount : s.amount / 12), 0);
+  const yearlyTotal = monthlyTotal * 12;
 
   // Reset history modal state
   const [showResetModal, setShowResetModal] = useState(false);
@@ -1086,7 +1210,320 @@ export default function CardDetail({ card, isDark, onBack, onSpend, onRentalUpda
             )}
           </div>
         )}
+
+        {/* ====== SUBSCRIPTIONS-ONLY: SUBSCRIPTIONS MANAGEMENT ====== */}
+        {isSubscriptions && (
+          <div className="mt-12 space-y-8">
+            <div className="flex items-center gap-3">
+              <div className={`h-px flex-1 ${isDark ? "bg-gray-700" : "bg-gray-200"}`} />
+              <h2 className={`text-3xl font-extrabold ${isDark ? "text-white" : "text-[#1c3d72]"}`}>
+                📺 My Subscriptions
+              </h2>
+              <div className={`h-px flex-1 ${isDark ? "bg-gray-700" : "bg-gray-200"}`} />
+            </div>
+
+            {/* Summary stats */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className={`p-6 rounded-2xl border ${isDark ? "bg-gray-800 border-gray-700" : "bg-white border-gray-100"} shadow`}>
+                <p className={`text-xs uppercase font-bold tracking-widest ${isDark ? "text-gray-400" : "text-gray-500"}`}>Active</p>
+                <p className={`text-3xl font-extrabold mt-1 ${isDark ? "text-white" : "text-[#1c3d72]"}`}>
+                  {subscriptions.filter((s) => s.active).length}
+                  <span className={`text-sm font-medium ml-2 ${isDark ? "text-gray-400" : "text-gray-500"}`}>of {subscriptions.length}</span>
+                </p>
+              </div>
+              <div className={`p-6 rounded-2xl border ${isDark ? "bg-gray-800 border-gray-700" : "bg-white border-gray-100"} shadow`}>
+                <p className={`text-xs uppercase font-bold tracking-widest ${isDark ? "text-gray-400" : "text-gray-500"}`}>Monthly Cost</p>
+                <p className={`text-3xl font-extrabold mt-1 text-emerald-500`}>
+                  {formatMoney(monthlyTotal)}
+                  <span className="text-sm opacity-70 ml-1">MAD</span>
+                </p>
+              </div>
+              <div className={`p-6 rounded-2xl border ${isDark ? "bg-gray-800 border-gray-700" : "bg-white border-gray-100"} shadow`}>
+                <p className={`text-xs uppercase font-bold tracking-widest ${isDark ? "text-gray-400" : "text-gray-500"}`}>Yearly Cost</p>
+                <p className={`text-3xl font-extrabold mt-1 ${isDark ? "text-orange-400" : "text-orange-600"}`}>
+                  {formatMoney(yearlyTotal)}
+                  <span className="text-sm opacity-70 ml-1">MAD</span>
+                </p>
+              </div>
+            </div>
+
+            {/* Subscriptions Grid */}
+            <div className={`p-8 rounded-3xl shadow-lg border ${isDark ? "bg-gray-800 border-gray-700" : "bg-white border-gray-100"}`}>
+              <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+                <h3 className={`text-2xl font-bold ${isDark ? "text-white" : "text-[#1c3d72]"}`}>Your Services</h3>
+                <button
+                  onClick={() => setShowAddSubModal(true)}
+                  className="px-4 py-2 bg-[#1c3d72] text-white rounded-xl font-semibold hover:bg-[#15305c] transition-colors text-sm"
+                >
+                  + Add Subscription
+                </button>
+              </div>
+
+              {subscriptions.length === 0 ? (
+                <div className={`text-center py-12 rounded-2xl border-2 border-dashed ${isDark ? "border-gray-700 text-gray-500" : "border-gray-200 text-gray-400"}`}>
+                  <p className="text-5xl mb-3">📺</p>
+                  <p className="font-semibold mb-1">No subscriptions yet</p>
+                  <p className="text-sm">Click "+ Add Subscription" to track Netflix, Spotify, and more.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {subscriptions.map((sub) => {
+                    const daysUntil = Math.ceil((new Date(sub.nextRenewal).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+                    const renewalSoon = daysUntil <= 7 && daysUntil >= 0;
+                    return (
+                      <div
+                        key={sub.id}
+                        className={`relative p-5 rounded-2xl border-2 transition-all ${
+                          sub.active
+                            ? isDark ? "bg-gray-900/40 border-gray-700" : "bg-white border-gray-200"
+                            : isDark ? "bg-gray-900/20 border-gray-800 opacity-60" : "bg-gray-50 border-gray-200 opacity-60"
+                        } shadow-sm hover:shadow-lg`}
+                        style={{ borderLeftWidth: "6px", borderLeftColor: sub.color }}
+                      >
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex items-center gap-3">
+                            <div
+                              className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shadow-md"
+                              style={{ backgroundColor: sub.color + "20", color: sub.color }}
+                            >
+                              {sub.emoji}
+                            </div>
+                            <div>
+                              <h4 className={`font-extrabold text-lg ${isDark ? "text-white" : "text-gray-900"}`}>{sub.name}</h4>
+                              {sub.plan && <p className={`text-xs ${isDark ? "text-gray-400" : "text-gray-500"}`}>{sub.plan}</p>}
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => deleteSub(sub.id)}
+                            className={`w-7 h-7 rounded-full flex items-center justify-center transition-colors ${isDark ? "hover:bg-red-900/40 text-gray-500 hover:text-red-400" : "hover:bg-red-50 text-gray-400 hover:text-red-600"}`}
+                            title="Delete subscription"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </div>
+
+                        <div className="flex items-end justify-between mb-3">
+                          <div>
+                            <p className={`text-2xl font-extrabold`} style={{ color: sub.color }}>
+                              {formatMoney(sub.amount)} <span className="text-xs font-medium opacity-70">MAD</span>
+                            </p>
+                            <p className={`text-[10px] uppercase font-bold tracking-wider ${isDark ? "text-gray-500" : "text-gray-400"}`}>
+                              per {sub.cycle === "monthly" ? "month" : "year"} · {sub.category}
+                            </p>
+                          </div>
+                        </div>
+
+                        {sub.active && (
+                          <div className={`text-xs mb-3 ${renewalSoon ? "text-amber-500 font-bold" : isDark ? "text-gray-400" : "text-gray-500"}`}>
+                            {renewalSoon ? "⏰ " : "📅 "}
+                            {daysUntil < 0
+                              ? `Overdue by ${-daysUntil} day(s)`
+                              : daysUntil === 0
+                              ? "Renews today!"
+                              : `Renews in ${daysUntil} day(s)`}
+                          </div>
+                        )}
+
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => toggleSubActive(sub.id)}
+                            className={`flex-1 py-2 rounded-lg text-xs font-bold transition-colors ${
+                              sub.active
+                                ? isDark ? "bg-gray-700 text-gray-300 hover:bg-gray-600" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                                : isDark ? "bg-emerald-900/40 text-emerald-300 hover:bg-emerald-900/60" : "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                            }`}
+                          >
+                            {sub.active ? "⏸ Pause" : "▶ Resume"}
+                          </button>
+                          {sub.active && (
+                            <button
+                              onClick={() => chargeSub(sub)}
+                              disabled={card.amount < sub.amount}
+                              className="flex-1 py-2 rounded-lg text-xs font-bold text-white bg-[#1c3d72] hover:bg-[#15305c] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                              title={card.amount < sub.amount ? "Insufficient balance" : "Charge this subscription"}
+                            >
+                              💸 Pay Now
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
+
+      {/* ========== ADD SUBSCRIPTION MODAL ========== */}
+      {showAddSubModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn"
+          onClick={() => setShowAddSubModal(false)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className={`relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl shadow-2xl ${
+              isDark ? "bg-gray-800" : "bg-white"
+            } animate-slideUp`}
+          >
+            <div className="bg-gradient-to-r from-[#1c3d72] to-blue-700 px-6 py-5 text-white sticky top-0 z-10">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-xl font-extrabold">Add Subscription</h3>
+                  <p className="text-xs text-blue-100 font-medium">Pick a popular service or add your own</p>
+                </div>
+                <button
+                  onClick={() => setShowAddSubModal(false)}
+                  className="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6 space-y-5">
+              {/* Presets */}
+              <div>
+                <p className={`text-xs uppercase font-bold tracking-widest mb-3 ${isDark ? "text-gray-400" : "text-gray-500"}`}>Popular Services</p>
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                  {SUB_PRESETS.map((p) => (
+                    <button
+                      key={p.name}
+                      type="button"
+                      onClick={() => applyPreset(p)}
+                      className={`p-3 rounded-xl border-2 transition-all text-center ${
+                        newSubName === p.name
+                          ? "border-[#1c3d72] shadow-md"
+                          : isDark ? "border-gray-700 hover:border-gray-600" : "border-gray-200 hover:border-gray-300"
+                      }`}
+                      style={newSubName === p.name ? { backgroundColor: p.color + "15" } : {}}
+                    >
+                      <div className="text-2xl mb-1">{p.emoji}</div>
+                      <div className={`text-xs font-bold ${isDark ? "text-gray-200" : "text-gray-800"}`}>{p.name}</div>
+                      <div className={`text-[10px] ${isDark ? "text-gray-500" : "text-gray-400"}`}>{p.amount} MAD</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <form onSubmit={handleAddSub} className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className={`block text-xs font-bold mb-1 ${isDark ? "text-gray-300" : "text-gray-700"}`}>Service Name *</label>
+                    <input
+                      value={newSubName}
+                      onChange={(e) => setNewSubName(e.target.value)}
+                      placeholder="e.g. Netflix"
+                      className={`w-full px-3 py-2 rounded-lg border-2 focus:outline-none ${isDark ? "bg-gray-700 border-gray-600 text-white placeholder-gray-500 focus:border-blue-400" : "bg-gray-50 border-gray-200 text-gray-800 focus:border-[#1c3d72]"}`}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className={`block text-xs font-bold mb-1 ${isDark ? "text-gray-300" : "text-gray-700"}`}>Plan</label>
+                    <input
+                      value={newSubPlan}
+                      onChange={(e) => setNewSubPlan(e.target.value)}
+                      placeholder="e.g. Premium"
+                      className={`w-full px-3 py-2 rounded-lg border-2 focus:outline-none ${isDark ? "bg-gray-700 border-gray-600 text-white placeholder-gray-500 focus:border-blue-400" : "bg-gray-50 border-gray-200 text-gray-800 focus:border-[#1c3d72]"}`}
+                    />
+                  </div>
+                  <div>
+                    <label className={`block text-xs font-bold mb-1 ${isDark ? "text-gray-300" : "text-gray-700"}`}>Amount (MAD) *</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      value={newSubAmount}
+                      onChange={(e) => setNewSubAmount(e.target.value)}
+                      placeholder="0.00"
+                      className={`w-full px-3 py-2 rounded-lg border-2 focus:outline-none ${isDark ? "bg-gray-700 border-gray-600 text-white placeholder-gray-500 focus:border-blue-400" : "bg-gray-50 border-gray-200 text-gray-800 focus:border-[#1c3d72]"}`}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className={`block text-xs font-bold mb-1 ${isDark ? "text-gray-300" : "text-gray-700"}`}>Billing Cycle</label>
+                    <div className={`flex p-1 rounded-lg ${isDark ? "bg-gray-700" : "bg-gray-100"}`}>
+                      <button
+                        type="button"
+                        onClick={() => setNewSubCycle("monthly")}
+                        className={`flex-1 py-1.5 rounded-md text-xs font-bold transition-all ${newSubCycle === "monthly" ? "bg-[#1c3d72] text-white shadow" : isDark ? "text-gray-400" : "text-gray-600"}`}
+                      >
+                        Monthly
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setNewSubCycle("yearly")}
+                        className={`flex-1 py-1.5 rounded-md text-xs font-bold transition-all ${newSubCycle === "yearly" ? "bg-[#1c3d72] text-white shadow" : isDark ? "text-gray-400" : "text-gray-600"}`}
+                      >
+                        Yearly
+                      </button>
+                    </div>
+                  </div>
+                  <div>
+                    <label className={`block text-xs font-bold mb-1 ${isDark ? "text-gray-300" : "text-gray-700"}`}>Category</label>
+                    <select
+                      value={newSubCategory}
+                      onChange={(e) => setNewSubCategory(e.target.value)}
+                      className={`w-full px-3 py-2 rounded-lg border-2 focus:outline-none ${isDark ? "bg-gray-700 border-gray-600 text-white focus:border-blue-400" : "bg-gray-50 border-gray-200 text-gray-800 focus:border-[#1c3d72]"}`}
+                    >
+                      <option>Streaming</option>
+                      <option>Music</option>
+                      <option>Gaming</option>
+                      <option>Cloud Storage</option>
+                      <option>Software</option>
+                      <option>Other</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className={`block text-xs font-bold mb-1 ${isDark ? "text-gray-300" : "text-gray-700"}`}>Icon & Color</label>
+                    <div className="flex gap-2">
+                      <input
+                        value={newSubEmoji}
+                        onChange={(e) => setNewSubEmoji(e.target.value)}
+                        maxLength={2}
+                        className={`w-16 px-3 py-2 rounded-lg border-2 text-center text-xl focus:outline-none ${isDark ? "bg-gray-700 border-gray-600 text-white focus:border-blue-400" : "bg-gray-50 border-gray-200 focus:border-[#1c3d72]"}`}
+                      />
+                      <input
+                        type="color"
+                        value={newSubColor}
+                        onChange={(e) => setNewSubColor(e.target.value)}
+                        className={`flex-1 h-10 rounded-lg border-2 cursor-pointer ${isDark ? "border-gray-600 bg-gray-700" : "border-gray-200"}`}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {subError && (
+                  <div className="bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-2 rounded-xl">
+                    {subError}
+                  </div>
+                )}
+
+                <div className="flex gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowAddSubModal(false)}
+                    className={`flex-1 py-3 rounded-xl font-bold transition-colors ${isDark ? "bg-gray-700 text-gray-300 hover:bg-gray-600" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="flex-1 bg-[#1c3d72] text-white py-3 rounded-xl font-bold hover:bg-[#15305c] transition-colors"
+                  >
+                    Add Subscription
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ========== RESET HISTORY MODAL ========== */}
       {showResetModal && (

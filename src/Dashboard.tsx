@@ -98,6 +98,18 @@ const iconOptions = [
       </svg>
     ),
   },
+  {
+    name: "Subscriptions",
+    color: "bg-gradient-to-tr from-fuchsia-500 to-rose-500",
+    chartColor: "#e879f9",
+    icon: (
+      <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <rect x="3" y="5" width="18" height="13" rx="2" strokeWidth={1.5} />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 10l5 2.5L10 15v-5z" fill="currentColor" />
+        <path strokeLinecap="round" strokeWidth={1.5} d="M8 21h8" />
+      </svg>
+    ),
+  },
 ];
 
 const formatMoney = (n: number) =>
@@ -575,6 +587,8 @@ interface DashboardProps {
   onLogout: () => void;
   isDark: boolean;
   toggleDark: () => void;
+
+  onNavigate: (page: "profile" | "exchange" | "family" | "workers") => void;
 }
 
 const STORAGE_KEY = "cih_dashboard_data";
@@ -646,11 +660,29 @@ const loadData = (username: string): PersistedData => {
           ],
         },
       },
+      {
+        id: "4",
+        title: "Subscriptions",
+        description: "Track your monthly streaming, music, and software subscriptions.",
+        amount: 800,
+        iconIndex: 8,
+        transactions: [
+          { id: "tx_sub_1", date: new Date(Date.now() - 86400000 * 5).toISOString(), amount: 120, description: "Netflix Premium", type: "spend", category: "Streaming" },
+          { id: "tx_sub_2", date: new Date(Date.now() - 86400000 * 10).toISOString(), amount: 50, description: "Spotify Premium", type: "spend", category: "Music" },
+        ],
+        subscriptions: [
+          { id: "sub_1", name: "Netflix", plan: "Premium", amount: 120, cycle: "monthly", category: "Streaming", color: "#e50914", emoji: "🎬", nextRenewal: new Date(Date.now() + 86400000 * 25).toISOString(), active: true, createdAt: new Date(Date.now() - 86400000 * 90).toISOString() },
+          { id: "sub_2", name: "Spotify", plan: "Premium", amount: 50, cycle: "monthly", category: "Music", color: "#1db954", emoji: "🎵", nextRenewal: new Date(Date.now() + 86400000 * 20).toISOString(), active: true, createdAt: new Date(Date.now() - 86400000 * 120).toISOString() },
+          { id: "sub_3", name: "YouTube Premium", plan: "Individual", amount: 60, cycle: "monthly", category: "Streaming", color: "#ff0000", emoji: "▶️", nextRenewal: new Date(Date.now() + 86400000 * 5).toISOString(), active: true, createdAt: new Date(Date.now() - 86400000 * 60).toISOString() },
+          { id: "sub_4", name: "iCloud", plan: "200GB", amount: 30, cycle: "monthly", category: "Cloud Storage", color: "#1c79c0", emoji: "☁️", nextRenewal: new Date(Date.now() + 86400000 * 12).toISOString(), active: true, createdAt: new Date(Date.now() - 86400000 * 200).toISOString() },
+          { id: "sub_5", name: "Disney+", plan: "Standard", amount: 80, cycle: "monthly", category: "Streaming", color: "#0c2461", emoji: "🏰", nextRenewal: new Date(Date.now() + 86400000 * 18).toISOString(), active: false, createdAt: new Date(Date.now() - 86400000 * 150).toISOString() },
+        ],
+      },
     ],
   };
 };
 
-export default function Dashboard({ user, onLogout, isDark, toggleDark }: DashboardProps) {
+export default function Dashboard({ user, onLogout, isDark, toggleDark, onNavigate }: DashboardProps) {
   const initial = loadData(user.username);
   const [cards, setCards] = useState<CardData[]>(initial.cards);
   const [generalMoney, setGeneralMoney] = useState<number>(initial.generalMoney);
@@ -795,6 +827,23 @@ export default function Dashboard({ user, onLogout, isDark, toggleDark }: Dashbo
               return { ...c, transactions: remaining };
             }));
           }}
+          onSubscriptionsUpdate={(cardId, subs) => {
+            setCards((prev) => prev.map((c) => (c.id === cardId ? { ...c, subscriptions: subs } : c)));
+          }}
+          onChargeSubscription={(cardId, sub) => {
+            setCards((prev) => prev.map((c) => {
+              if (c.id !== cardId) return c;
+              const newTx: Transaction = {
+                id: `subpay_${Date.now()}`,
+                date: new Date().toISOString(),
+                amount: sub.amount,
+                description: `${sub.name}${sub.plan ? ` (${sub.plan})` : ""}`,
+                type: "spend",
+                category: sub.category,
+              };
+              return { ...c, amount: c.amount - sub.amount, transactions: [newTx, ...(c.transactions || [])] };
+            }));
+          }}
           username={user.username}
         />
       );
@@ -803,100 +852,163 @@ export default function Dashboard({ user, onLogout, isDark, toggleDark }: Dashbo
 
   return (
     <div className={`min-h-screen transition-colors duration-500 ${isDark ? "bg-gray-900" : "bg-white"}`}>
-      {/* Header */}
-      <header className="w-full px-6 sm:px-8 py-6 flex items-center justify-between gap-4">
-        <div className={`w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 ${isDark ? "text-blue-300" : "text-[#1c3d72]"}`}>
-          <CIHLogo />
-        </div>
-
-        {/* Money Summary - center */}
-        <div className="flex-1 hidden md:flex justify-center">
-          <div className={`flex items-stretch rounded-2xl overflow-hidden shadow-lg border ${isDark ? "bg-gray-800 border-gray-700" : "bg-white border-gray-100"}`}>
-            {/* General Money */}
-            <button
-              onClick={() => setShowGeneralModal(true)}
-              className={`px-6 py-3 text-left transition-colors group ${isDark ? "hover:bg-gray-700" : "hover:bg-gray-50"}`}
+      {/* Unified Top Navigation Bar */}
+      <nav className={`sticky top-0 z-50 ${isDark ? "bg-gray-800/95 border-gray-700" : "bg-white/95 border-gray-200"} backdrop-blur-md border-b shadow-sm`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2.5">
+          <div className="flex items-center justify-between gap-3">
+            {/* LEFT: CIH Logo */}
+            <a 
+              href="https://www.e-cihbank.ma/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className={`w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0 block transform hover:scale-105 transition-all duration-300 cursor-pointer ${isDark ? "text-blue-300" : "text-[#1c3d72]"}`}
+              title="Visit CIH Bank Website"
             >
-              <p className={`text-[10px] uppercase font-bold tracking-wider ${isDark ? "text-gray-500" : "text-gray-400"}`}>
-                General Money
-              </p>
-              <div className="flex items-baseline gap-1.5">
-                <p className={`text-xl lg:text-2xl font-extrabold ${isDark ? "text-emerald-300" : "text-emerald-600"}`}>
-                  {formatMoney(generalMoney)}
-                </p>
-                <span className={`text-[10px] font-medium ${isDark ? "text-gray-500" : "text-gray-400"}`}>MAD</span>
-                <svg className={`w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity ${isDark ? "text-gray-400" : "text-gray-500"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              <CIHLogo />
+            </a>
+
+            {/* CENTER: Navigation Icons */}
+            <div className="flex items-center gap-1 sm:gap-2">
+              {/* Home */}
+              <button
+                className={`p-2.5 rounded-xl transition-all group relative bg-[#1c3d72] text-white`}
+                title="Dashboard"
+              >
+                <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                 </svg>
-              </div>
-            </button>
+                <span className="absolute -bottom-7 left-1/2 -translate-x-1/2 text-[10px] font-medium opacity-0 group-hover:opacity-100 transition whitespace-nowrap">Home</span>
+              </button>
+              
+              {/* Family */}
+              <button
+                onClick={() => onNavigate("family")}
+                className={`p-2.5 rounded-xl transition-all group relative ${isDark ? "hover:bg-gray-700 text-gray-300" : "hover:bg-gray-100 text-gray-600"}`}
+                title="Family Expenses"
+              >
+                <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                <span className={`absolute -bottom-7 left-1/2 -translate-x-1/2 text-[10px] font-medium opacity-0 group-hover:opacity-100 transition whitespace-nowrap ${isDark ? "text-gray-300" : "text-gray-600"}`}>Family</span>
+              </button>
+              
+              {/* Workers */}
+              <button
+                onClick={() => onNavigate("workers")}
+                className={`p-2.5 rounded-xl transition-all group relative ${isDark ? "hover:bg-gray-700 text-gray-300" : "hover:bg-gray-100 text-gray-600"}`}
+                title="Workers Management"
+              >
+                <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                <span className={`absolute -bottom-7 left-1/2 -translate-x-1/2 text-[10px] font-medium opacity-0 group-hover:opacity-100 transition whitespace-nowrap ${isDark ? "text-gray-300" : "text-gray-600"}`}>Workers</span>
+              </button>
+              
+              {/* Exchange Rates */}
+              <button
+                onClick={() => onNavigate("exchange")}
+                className={`p-2.5 rounded-xl transition-all group relative ${isDark ? "hover:bg-gray-700 text-gray-300" : "hover:bg-gray-100 text-gray-600"}`}
+                title="Exchange Rates"
+              >
+                <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                </svg>
+                <span className={`absolute -bottom-7 left-1/2 -translate-x-1/2 text-[10px] font-medium opacity-0 group-hover:opacity-100 transition whitespace-nowrap ${isDark ? "text-gray-300" : "text-gray-600"}`}>Exchange</span>
+              </button>
+            </div>
 
-            {/* Divider */}
-            <div className={`w-px ${isDark ? "bg-gray-700" : "bg-gray-200"}`} />
+            {/* RIGHT: Theme Toggle, Profile, Logout */}
+            <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+              {/* Theme Toggle */}
+              <button
+                onClick={toggleDark}
+                className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${isDark ? "bg-gray-700 text-yellow-300 hover:bg-gray-600" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}
+                title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+              >
+                {isDark ? (
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                  </svg>
+                ) : (
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                  </svg>
+                )}
+              </button>
 
-            {/* Total Money */}
-            <div className={`px-6 py-3 ${isDark ? "bg-gradient-to-br from-[#1c3d72] to-blue-900" : "bg-gradient-to-br from-[#1c3d72] to-blue-700"} text-white`}>
-              <p className="text-[10px] uppercase font-bold tracking-wider opacity-70">Total Money</p>
-              <div className="flex items-baseline gap-1.5">
-                <p className="text-xl lg:text-2xl font-extrabold">{formatMoney(totalMoney)}</p>
-                <span className="text-[10px] font-medium opacity-70">MAD</span>
-              </div>
+              {/* Profile */}
+              <button
+                onClick={() => onNavigate("profile")}
+                className={`flex items-center gap-2 pl-1 pr-2 py-1 rounded-full transition-colors ${isDark ? "hover:bg-gray-700" : "hover:bg-gray-100"}`}
+                title="Edit Profile"
+              >
+                <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-white text-sm bg-gradient-to-tr ${
+                  user.avatarColor === "emerald" ? "from-emerald-500 to-teal-500"
+                  : user.avatarColor === "orange" ? "from-orange-400 to-red-500"
+                  : user.avatarColor === "purple" ? "from-purple-500 to-pink-500"
+                  : user.avatarColor === "amber" ? "from-amber-400 to-yellow-500"
+                  : user.avatarColor === "rose" ? "from-rose-400 to-pink-600"
+                  : user.avatarColor === "cyan" ? "from-cyan-400 to-blue-500"
+                  : user.avatarColor === "indigo" ? "from-indigo-500 to-purple-600"
+                  : "from-[#1c3d72] to-blue-500"
+                }`}>
+                  {user.fullName.charAt(0).toUpperCase()}
+                </div>
+                <span className={`hidden lg:block text-sm font-semibold ${isDark ? "text-white" : "text-gray-800"}`}>
+                  {user.fullName.split(" ")[0]}
+                </span>
+              </button>
+
+              {/* Logout */}
+              <button
+                onClick={handleLogout}
+                className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${isDark ? "bg-gray-700 text-red-400 hover:bg-red-900/30" : "bg-gray-100 text-red-500 hover:bg-red-50"}`}
+                title="Logout"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+              </button>
             </div>
           </div>
         </div>
+      </nav>
 
-        {/* Right side controls */}
-        <div className="flex items-center gap-3 sm:gap-5 flex-shrink-0">
+      {/* Money Summary Header */}
+      <header className="w-full px-6 sm:px-8 py-6 flex justify-center">
+        <div className={`flex items-stretch rounded-2xl overflow-hidden shadow-lg border ${isDark ? "bg-gray-800 border-gray-700" : "bg-white border-gray-100"}`}>
+          {/* General Money */}
           <button
-            onClick={toggleDark}
-            className={`w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 ${isDark ? "bg-gray-700 text-yellow-300 hover:bg-gray-600" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}
-            title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            onClick={() => setShowGeneralModal(true)}
+            className={`px-6 py-3 text-left transition-colors group ${isDark ? "hover:bg-gray-700" : "hover:bg-gray-50"}`}
           >
-            {isDark ? (
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            <p className={`text-[10px] uppercase font-bold tracking-wider ${isDark ? "text-gray-500" : "text-gray-400"}`}>
+              General Money
+            </p>
+            <div className="flex items-baseline gap-1.5">
+              <p className={`text-xl lg:text-2xl font-extrabold ${isDark ? "text-emerald-300" : "text-emerald-600"}`}>
+                {formatMoney(generalMoney)}
+              </p>
+              <span className={`text-[10px] font-medium ${isDark ? "text-gray-500" : "text-gray-400"}`}>MAD</span>
+              <svg className={`w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity ${isDark ? "text-gray-400" : "text-gray-500"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
               </svg>
-            ) : (
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-              </svg>
-            )}
+            </div>
           </button>
 
-          <div className="flex items-center gap-3">
-            <div className="hidden sm:block text-right">
-              <p className={`text-sm font-bold ${isDark ? "text-white" : "text-gray-800"}`}>{user.fullName}</p>
-              <p className={`text-xs ${isDark ? "text-gray-400" : "text-gray-500"}`}>@{user.username}</p>
+          {/* Divider */}
+          <div className={`w-px ${isDark ? "bg-gray-700" : "bg-gray-200"}`} />
+
+          {/* Total Money */}
+          <div className={`px-6 py-3 ${isDark ? "bg-gradient-to-br from-[#1c3d72] to-blue-900" : "bg-gradient-to-br from-[#1c3d72] to-blue-700"} text-white`}>
+            <p className="text-[10px] uppercase font-bold tracking-wider opacity-70">Total Money</p>
+            <div className="flex items-baseline gap-1.5">
+              <p className="text-xl lg:text-2xl font-extrabold">{formatMoney(totalMoney)}</p>
+              <span className="text-[10px] font-medium opacity-70">MAD</span>
             </div>
-            <div className="w-11 h-11 rounded-full flex items-center justify-center font-bold text-white bg-gradient-to-tr from-[#1c3d72] to-blue-500 text-sm">
-              {user.fullName.charAt(0).toUpperCase()}
-            </div>
-            <button
-              onClick={handleLogout}
-              className={`w-11 h-11 rounded-full flex items-center justify-center transition-colors ${isDark ? "bg-gray-700 text-red-400 hover:bg-red-900/30" : "bg-gray-100 text-red-500 hover:bg-red-50"}`}
-              title="Logout"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
-            </button>
           </div>
         </div>
       </header>
-
-      {/* Mobile money summary */}
-      <div className="md:hidden px-6 mb-4">
-        <div className={`flex rounded-2xl overflow-hidden shadow-lg border ${isDark ? "bg-gray-800 border-gray-700" : "bg-white border-gray-100"}`}>
-          <button onClick={() => setShowGeneralModal(true)} className={`flex-1 px-4 py-3 text-left ${isDark ? "hover:bg-gray-700" : "hover:bg-gray-50"}`}>
-            <p className={`text-[10px] uppercase font-bold ${isDark ? "text-gray-500" : "text-gray-400"}`}>General</p>
-            <p className={`text-lg font-extrabold ${isDark ? "text-emerald-300" : "text-emerald-600"}`}>{formatMoney(generalMoney)}</p>
-          </button>
-          <div className={`flex-1 px-4 py-3 ${isDark ? "bg-gradient-to-br from-[#1c3d72] to-blue-900" : "bg-gradient-to-br from-[#1c3d72] to-blue-700"} text-white`}>
-            <p className="text-[10px] uppercase font-bold opacity-70">Total</p>
-            <p className="text-lg font-extrabold">{formatMoney(totalMoney)}</p>
-          </div>
-        </div>
-      </div>
 
       {/* Main Content */}
       <main className="container mx-auto px-6 sm:px-8 pb-24 max-w-7xl">

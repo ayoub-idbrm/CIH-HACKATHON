@@ -114,9 +114,15 @@ export default function LoginPage({ onLogin, isDark, toggleDark }: LoginPageProp
       <div className={`w-full max-w-md mx-4 rounded-3xl shadow-2xl p-10 transition-colors duration-500 ${isDark ? "bg-gray-800 shadow-black/30" : "bg-white"}`}>
         {/* Logo */}
         <div className="flex justify-center mb-6">
-          <div className="w-28 h-28">
+          <a 
+            href="https://www.e-cihbank.ma/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="w-28 h-28 block transform hover:scale-105 transition-transform duration-300 cursor-pointer"
+            title="Visit CIH Bank Website"
+          >
             <CIHLogo />
-          </div>
+          </a>
         </div>
 
         {/* Title */}
