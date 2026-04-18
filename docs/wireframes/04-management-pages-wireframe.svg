@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900">
+  <rect width="1400" height="900" fill="#f8fafc"/>
+  <text x="60" y="70" font-family="Arial, sans-serif" font-size="36" font-weight="700" fill="#0f172a">Wireframe 04 — Management Pages</text>
+  <text x="60" y="108" font-family="Arial, sans-serif" font-size="18" fill="#334155">Goal: Dedicated workspaces for profile, exchange rates, family allowances, and worker payroll.</text>
+
+  <rect x="70" y="150" width="1260" height="680" rx="20" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+
+  <rect x="100" y="190" width="590" height="290" rx="14" fill="#f8fafc" stroke="#64748b"/>
+  <text x="125" y="226" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#0f172a">Profile Page</text>
+  <rect x="130" y="245" width="530" height="48" rx="9" fill="#fff" stroke="#64748b"/>
+  <text x="148" y="276" font-family="Arial, sans-serif" font-size="14" fill="#64748b">Header + Back + Theme Toggle</text>
+  <rect x="130" y="305" width="170" height="145" rx="10" fill="#fff" stroke="#64748b"/>
+  <text x="155" y="381" font-family="Arial, sans-serif" font-size="14" fill="#334155">Avatar</text>
+  <rect x="315" y="305" width="345" height="145" rx="10" fill="#fff" stroke="#64748b" stroke-dasharray="6 6"/>
+  <text x="333" y="343" font-family="Arial, sans-serif" font-size="14" fill="#334155">Personal info + password section</text>
+
+  <rect x="710" y="190" width="590" height="290" rx="14" fill="#f8fafc" stroke="#64748b"/>
+  <text x="735" y="226" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#0f172a">Exchange Rates Page</text>
+  <rect x="740" y="245" width="530" height="48" rx="9" fill="#fff" stroke="#64748b"/>
+  <text x="758" y="276" font-family="Arial, sans-serif" font-size="14" fill="#64748b">Live update timestamp + refresh</text>
+  <rect x="740" y="305" width="255" height="145" rx="10" fill="#fff" stroke="#64748b"/>
+  <text x="770" y="381" font-family="Arial, sans-serif" font-size="14" fill="#334155">Converter Card</text>
+  <rect x="1015" y="305" width="255" height="145" rx="10" fill="#fff" stroke="#64748b"/>
+  <text x="1046" y="381" font-family="Arial, sans-serif" font-size="14" fill="#334155">Rates/Metals Chart</text>
+
+  <rect x="100" y="510" width="590" height="290" rx="14" fill="#f8fafc" stroke="#64748b"/>
+  <text x="125" y="546" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#0f172a">Family Expenses Page</text>
+  <rect x="130" y="565" width="530" height="48" rx="9" fill="#fff" stroke="#64748b"/>
+  <text x="148" y="596" font-family="Arial, sans-serif" font-size="14" fill="#64748b">Summary cards: total/paid/remaining</text>
+  <rect x="130" y="625" width="250" height="145" rx="10" fill="#fff" stroke="#64748b"/>
+  <text x="166" y="701" font-family="Arial, sans-serif" font-size="14" fill="#334155">Members list + paid toggle</text>
+  <rect x="410" y="625" width="250" height="145" rx="10" fill="#fff" stroke="#64748b"/>
+  <text x="456" y="701" font-family="Arial, sans-serif" font-size="14" fill="#334155">Allowance chart</text>
+
+  <rect x="710" y="510" width="590" height="290" rx="14" fill="#f8fafc" stroke="#64748b"/>
+  <text x="735" y="546" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#0f172a">Workers Management Page</text>
+  <rect x="740" y="565" width="530" height="48" rx="9" fill="#fff" stroke="#64748b"/>
+  <text x="758" y="596" font-family="Arial, sans-serif" font-size="14" fill="#64748b">Summary cards: payroll/paid/remaining</text>
+  <rect x="740" y="625" width="250" height="145" rx="10" fill="#fff" stroke="#64748b"/>
+  <text x="773" y="701" font-family="Arial, sans-serif" font-size="14" fill="#334155">Workers list + paid toggle</text>
+  <rect x="1020" y="625" width="250" height="145" rx="10" fill="#fff" stroke="#64748b"/>
+  <text x="1080" y="701" font-family="Arial, sans-serif" font-size="14" fill="#334155">Payroll chart</text>
+</svg>
