@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900">
+  <rect width="1400" height="900" fill="#f8fafc"/>
+  <text x="60" y="70" font-family="Arial, sans-serif" font-size="36" font-weight="700" fill="#0f172a">Wireframe 01 — Login / Register</text>
+  <text x="60" y="108" font-family="Arial, sans-serif" font-size="18" fill="#334155">Goal: Fast authentication entry point with clear mode switch and theme toggle.</text>
+
+  <rect x="70" y="150" width="1260" height="680" rx="20" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+  <rect x="1060" y="190" width="210" height="52" rx="26" fill="#e2e8f0" stroke="#64748b" stroke-dasharray="6 6"/>
+  <text x="1094" y="223" font-family="Arial, sans-serif" font-size="18" fill="#334155">Theme Toggle</text>
+
+  <rect x="460" y="210" width="480" height="560" rx="24" fill="#f8fafc" stroke="#64748b" stroke-width="2"/>
+  <circle cx="700" cy="290" r="54" fill="#e2e8f0" stroke="#64748b" stroke-width="2"/>
+  <text x="665" y="297" font-family="Arial, sans-serif" font-size="16" fill="#334155">LOGO</text>
+
+  <rect x="535" y="360" width="330" height="55" rx="10" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
+  <text x="550" y="394" font-family="Arial, sans-serif" font-size="18" fill="#64748b">Username</text>
+
+  <rect x="535" y="430" width="330" height="55" rx="10" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
+  <text x="550" y="464" font-family="Arial, sans-serif" font-size="18" fill="#64748b">Password</text>
+
+  <rect x="535" y="510" width="330" height="58" rx="12" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="666" y="546" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#1e3a8a">Sign In</text>
+
+  <rect x="535" y="585" width="330" height="70" rx="12" fill="#f1f5f9" stroke="#94a3b8" stroke-dasharray="6 6"/>
+  <text x="555" y="620" font-family="Arial, sans-serif" font-size="16" fill="#475569">Toggle: Sign In / Register</text>
+
+  <rect x="535" y="670" width="330" height="70" rx="12" fill="#ecfeff" stroke="#0891b2" stroke-dasharray="6 6"/>
+  <text x="557" y="705" font-family="Arial, sans-serif" font-size="16" fill="#0f766e">Demo Credentials Hint</text>
+
+  <rect x="110" y="250" width="280" height="210" rx="14" fill="#f8fafc" stroke="#64748b" stroke-dasharray="7 7"/>
+  <text x="130" y="288" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#0f172a">UX Notes</text>
+  <text x="130" y="322" font-family="Arial, sans-serif" font-size="16" fill="#334155">• Single clear CTA</text>
+  <text x="130" y="350" font-family="Arial, sans-serif" font-size="16" fill="#334155">• Minimal fields first</text>
+  <text x="130" y="378" font-family="Arial, sans-serif" font-size="16" fill="#334155">• Inline feedback</text>
+  <text x="130" y="406" font-family="Arial, sans-serif" font-size="16" fill="#334155">• Trust via demo accounts</text>
+
+  <line x1="390" y1="355" x2="458" y2="390" stroke="#334155" stroke-width="2"/>
+  <polygon points="458,390 445,390 451,378" fill="#334155"/>
+</svg>

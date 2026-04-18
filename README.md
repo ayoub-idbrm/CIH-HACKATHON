@@ -197,6 +197,30 @@ This means:
 
 ---
 
+## 🧩 Wireframes (Figma / Mockups / Screenshots)
+
+Clear UX visualization assets are available in:
+
+- [`docs/wireframes/README.md`](./docs/wireframes/README.md)
+
+### Included Wireframes
+
+1. **Login / Register**
+2. **Dashboard**
+3. **Card Detail**
+4. **Management Pages (Profile, Exchange, Family, Workers)**
+5. **User Flow Diagram**
+
+### Quick Preview
+
+![Login Wireframe](./docs/wireframes/01-login-wireframe.svg)
+![Dashboard Wireframe](./docs/wireframes/02-dashboard-wireframe.svg)
+![Card Detail Wireframe](./docs/wireframes/03-card-detail-wireframe.svg)
+![Management Pages Wireframe](./docs/wireframes/04-management-pages-wireframe.svg)
+![UX Flow](./docs/wireframes/05-user-flow.svg)
+
+---
+
 ## 📱 Usage Tips
 
 1. **First login?** Try `mohamed` / `1234`.

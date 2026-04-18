@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900">
+  <rect width="1400" height="900" fill="#f8fafc"/>
+  <text x="60" y="70" font-family="Arial, sans-serif" font-size="36" font-weight="700" fill="#0f172a">UX Flow — CIH Bank Money Manager</text>
+  <text x="60" y="108" font-family="Arial, sans-serif" font-size="18" fill="#334155">Clear visualization of primary navigation and user actions.</text>
+
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#334155"/>
+    </marker>
+  </defs>
+
+  <rect x="100" y="170" width="250" height="95" rx="14" fill="#e2e8f0" stroke="#334155" stroke-width="2"/>
+  <text x="170" y="226" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#0f172a">Login / Register</text>
+
+  <rect x="460" y="170" width="250" height="95" rx="14" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2"/>
+  <text x="545" y="226" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#1e3a8a">Dashboard</text>
+
+  <rect x="820" y="130" width="250" height="90" rx="12" fill="#fff" stroke="#334155" stroke-width="2"/>
+  <text x="902" y="183" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#0f172a">Profile</text>
+
+  <rect x="820" y="250" width="250" height="90" rx="12" fill="#fff" stroke="#334155" stroke-width="2"/>
+  <text x="860" y="303" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#0f172a">Exchange Rates</text>
+
+  <rect x="820" y="370" width="250" height="90" rx="12" fill="#fff" stroke="#334155" stroke-width="2"/>
+  <text x="867" y="423" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#0f172a">Family Expenses</text>
+
+  <rect x="820" y="490" width="250" height="90" rx="12" fill="#fff" stroke="#334155" stroke-width="2"/>
+  <text x="836" y="543" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#0f172a">Workers Management</text>
+
+  <rect x="460" y="360" width="250" height="95" rx="14" fill="#fef9c3" stroke="#a16207" stroke-width="2"/>
+  <text x="510" y="417" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#78350f">Card Detail</text>
+
+  <rect x="100" y="520" width="250" height="95" rx="14" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+  <text x="132" y="577" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#14532d">Transactions / Spend</text>
+
+  <rect x="460" y="620" width="250" height="95" rx="14" fill="#fee2e2" stroke="#991b1b" stroke-width="2"/>
+  <text x="510" y="677" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#7f1d1d">Charts &amp; History</text>
+
+  <rect x="820" y="620" width="250" height="95" rx="14" fill="#ede9fe" stroke="#5b21b6" stroke-width="2"/>
+  <text x="876" y="677" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#4c1d95">Renting Tools</text>
+
+  <line x1="350" y1="218" x2="460" y2="218" stroke="#334155" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="368" y="206" font-family="Arial, sans-serif" font-size="14" fill="#334155">Auth success</text>
+
+  <line x1="710" y1="190" x2="820" y2="170" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="710" y1="220" x2="820" y2="285" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="710" y1="240" x2="820" y2="405" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="710" y1="250" x2="820" y2="525" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <line x1="585" y1="265" x2="585" y2="360" stroke="#334155" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="596" y="318" font-family="Arial, sans-serif" font-size="14" fill="#334155">Open card</text>
+
+  <line x1="460" y1="420" x2="350" y2="560" stroke="#334155" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="340" y="468" font-family="Arial, sans-serif" font-size="14" fill="#334155">Record actions</text>
+
+  <line x1="585" y1="455" x2="585" y2="620" stroke="#334155" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="596" y="545" font-family="Arial, sans-serif" font-size="14" fill="#334155">View analytics</text>
+
+  <line x1="710" y1="420" x2="820" y2="665" stroke="#334155" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="744" y="538" font-family="Arial, sans-serif" font-size="14" fill="#334155">Renting-specific path</text>
+
+  <line x1="945" y1="220" x2="945" y2="130" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="945" y1="340" x2="945" y2="250" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="945" y1="460" x2="945" y2="370" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="945" y1="580" x2="945" y2="490" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <rect x="1100" y="180" width="250" height="260" rx="14" fill="#ffffff" stroke="#94a3b8" stroke-dasharray="7 7"/>
+  <text x="1122" y="220" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#0f172a">Experience Principles</text>
+  <text x="1122" y="258" font-family="Arial, sans-serif" font-size="15" fill="#334155">• One clear primary action per page</text>
+  <text x="1122" y="285" font-family="Arial, sans-serif" font-size="15" fill="#334155">• Reversible money operations</text>
+  <text x="1122" y="312" font-family="Arial, sans-serif" font-size="15" fill="#334155">• Immediate financial feedback</text>
+  <text x="1122" y="339" font-family="Arial, sans-serif" font-size="15" fill="#334155">• Shared visual language</text>
+  <text x="1122" y="366" font-family="Arial, sans-serif" font-size="15" fill="#334155">• Secure destructive actions</text>
+</svg>
