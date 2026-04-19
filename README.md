@@ -1,305 +1,198 @@
-Perfect ✅ — I’ll convert your README into a **structured categorized block format** using clean section markers.
-
-I’ll use this format:
-
-```
-::SECTION_NAME::
-content...
-
-::SUBSECTION::
-content...
-```
-
-This keeps it:
-- ✅ Human readable
-- ✅ Machine parsable
-- ✅ Clearly categorized
-- ✅ Not boring plain text
+# 📋 README Structured Categories
 
 ---
 
-Here is your transformed structured version:
+## 🎯 Meta Info
+
+| Field | Value |
+|-------|-------|
+| **Title** | CIH Bank — Personal Money Manager |
+| **Type** | Personal Finance Web Application |
+| **Style** | Inspired by CIH Bank Du Maroc |
+| **Build Output** | Single self-contained HTML file |
 
 ---
 
-```
-::PROJECT::
-Name: CIH Bank — Personal Money Manager
-Type: Personal Finance Web Application
-Inspiration: CIH Bank Du Maroc
-Storage: Fully Local (localStorage)
-Build Output: Single self-contained HTML file
+## 🛠️ Tech Stack
 
-::TECH_BADGES::
-React 19
-TypeScript 5
-Vite 7
-Tailwind CSS 4
-Recharts 3
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| ⚛️ React | 19 | UI framework |
+| 🔷 TypeScript | 5 | Type safety |
+| ⚡ Vite | 7 | Build tool |
+| 🎨 Tailwind CSS | 4 | Styling |
+| 📊 Recharts | 3 | Charts |
+| 📦 vite-plugin-singlefile | — | Single-file bundling |
 
-::OVERVIEW::
-Modern personal finance manager with multi-category money tracking,
-interactive charts, rental management with tenant tracking,
-light/dark themes, and full local persistence.
+---
 
---------------------------------------------------
+## ✨ Features
 
-::FEATURES::
-
-::AUTHENTICATION::
-- Login with local database validation
+### 🔐 Authentication
+- Login with username/password validation
 - User registration
-- Session persistence
+- Session persistence across refreshes
 - Password verification for sensitive actions
-- Preloaded demo accounts
+- Pre-loaded demo accounts
 
-::THEME_SYSTEM::
-- Dark / Light toggle (Login + Dashboard)
-- Saved in localStorage
-- Smooth UI transitions
+### 🌓 Theme System
+- Dark / Light mode toggle
+- Available on Login AND Dashboard
+- Preferences saved in localStorage
+- Smooth transitions on all components
 
-::MONEY_MANAGEMENT::
-- General Money balance
-- Auto-calculated Total Money
-- Deposit / Set Exact modal
-- Allocate / Withdraw between General and Cards
+### 💰 Money Management
+- **General Money** — unallocated balance (top-center)
+- **Total Money** — General + sum of all cards
+- Deposit / Set Exact balance
+- Allocate / Withdraw between General and cards
 - Per-user isolated state
 
-::CATEGORY_CARDS::
-Default:
-  - Food (orange)
-  - Saving (green)
-  - Renting (blue)
+### 💳 Category Cards
+| Card | Icon | Color | Description |
+|------|------|-------|-------------|
+| Food | 🍴 | Orange | Food expenses |
+| Saving | 💰 | Green | Savings |
+| Renting | 🏠 | Blue | Rental management |
+| Custom | + | 8 presets | User-created cards |
 
-Custom Cards:
-  - Custom title + description
-  - 8 preset icons
-  - 8 color schemes
-  - Optional initial allocation
+**Card Features:**
+- Custom title & description
+- 8 preset icons (Shopping, Money, Home, Document, Heart, Star, Car, Education)
+- Auto-refund balance on delete
 
-Card Rules:
-  - Delete card → balance refunded to General
-  - Click card → opens detail page
+### 📊 Live Consumption Diagram
+- Interactive donut chart (Recharts)
+- Color-matched slices per card
+- Gray slice for General Money
+- Hover tooltips with MAD amounts
+- Auto-updates on balance changes
 
-::LIVE_DASHBOARD_CHART::
-Type: Donut Chart
-Library: Recharts
-Includes:
-  - Slice per card
-  - Gray slice for General Money
-  - Hover tooltips
-  - Auto updates on balance change
+### 💎 Card Detail Page
+- High-fidelity credit card mockup (CIH Bank Mastercard style)
+- Live balance display
+- Spend form with category selector
+- Catalog of Consumption (transaction history)
+- Consumption by Category chart
 
---------------------------------------------------
+### 🏠 Rental Management *(Renting Card Only)*
+- Home Owner registration (name, IBAN, rent)
+- Add/Archive owners with history
+- 4 Tenants Tracker with individual shares
+- Mark Paid/Unpaid toggle
+- Send to Owner (unlocks when all 4 paid)
+- Monthly Payments by Owner chart
+- Savings Analysis comparison
 
-::CARD_DETAIL_PAGE::
+### 🗑️ Reset History
+- Period selection (Week/Month/Year/All)
+- Transaction count preview
+- Double confirmation (type "DELETE" + password)
+- Card balance unaffected
 
-::VISUAL_CARD_UI::
-- Vertical credit card mockup
-- Custom icon & subtitle
-- CIH logo
-- EMV chip
-- Mastercard logos
-- Gold glowing frame
+---
 
-::BALANCE_ACTIONS::
-- Deposit
-- Withdraw
+## 🚀 Getting Started
 
-::SPEND_FORM::
-Inputs:
-  - Description
-  - Amount (MAD)
-  - Category selector (icon pills)
-
-::TRANSACTION_CATALOG::
-- Chronological history
-- Type badges:
-    spend
-    deposit
-    withdrawal
-    rent
-
-::CATEGORY_ANALYTICS::
-- Donut chart
-- Legend with progress bars
-- Percentage breakdown
-
---------------------------------------------------
-
-::RENTAL_MANAGEMENT:: (Renting Card Only)
-
-::OWNER_SYSTEM::
-- Register owner (name, IBAN, rent)
-- Add new owner auto-archives previous
-- Owner payment history tracking
-
-::TENANT_TRACKER::
-- 4 tenants
-- Individual share amounts
-- Mark Paid / Unpaid
-- Auto deposit / refund logic
-- Logged in catalog
-
-::SEND_TO_OWNER_FLOW::
-Condition: All 4 tenants paid
-Features:
-  - Dynamic progress color
-  - Deduct total rent
-  - Reset tenants for next month
-
-::OWNER_ANALYTICS::
-- Monthly payments bar chart
-- Savings comparison (green/red panel)
-
---------------------------------------------------
-
-::RESET_HISTORY::
-
-::STEP_1_PERIOD_SELECTION::
-Options:
-  - This Week (7 days)
-  - This Month (30 days)
-  - This Year (365 days)
-  - ALL Time (red)
-
-Shows live transaction count.
-
-::STEP_2_CONFIRMATION::
-Requirements:
-  - Type DELETE
-  - Enter account password
-
-Rules:
-  - Balance unchanged
-  - Only history removed
-  - Charts auto re-render
-
---------------------------------------------------
-
-::GETTING_STARTED::
-
-::PREREQUISITES::
+### Prerequisites
+```
 Node.js 18+
 npm
+```
 
-::INSTALL::
-Command: npm install
+### Commands
 
-::DEV_RUN::
-Command: npm run dev
-URL: http://localhost:5173
+```bash
+npm install              # Install dependencies
+npm run dev              # Development server
+npm run build            # Production build (single HTML)
+npm run preview          # Preview production build
+```
 
-::BUILD_PRODUCTION::
-Command: npm run build
-Output: Single dist/index.html (via vite-plugin-singlefile)
-
-::PREVIEW_BUILD::
-Command: npm run preview
-
---------------------------------------------------
-
-::DEMO_ACCOUNTS::
-admin / admin123
-user / user123
-mohamed / 1234
-
---------------------------------------------------
-
-::PROJECT_STRUCTURE::
-public/images → logos & card art
-src/App.tsx → routing + session + theme
-src/LoginPage.tsx → login/register
-src/Dashboard.tsx → cards + money + chart
-src/CardDetail.tsx → full detail + rental system
-src/Card.tsx → reusable tile
-src/database.ts → local backend + persistence
-src/main.tsx → entry point
-src/index.css → Tailwind + animations
-index.html
-package.json
-vite.config.ts
-README.md
-
---------------------------------------------------
-
-::TECH_STACK::
-React 19 → UI
-TypeScript → Type safety
-Vite 7 → Build tool
-Tailwind CSS 4 → Styling
-Recharts → Charts
-vite-plugin-singlefile → Single file bundle
-
---------------------------------------------------
-
-::BACKEND_ARCHITECTURE::
-Server: None
-Type: Static app
-
-Database Logic:
-  - In-memory users table
-  - localStorage persistence
-  - Per-user namespace: cih_user_data_<username>
-
-Auth Helpers:
-  authenticateUser
-  registerUser
-  getCurrentUser
-  setCurrentUser
-  logout
-
-Notes:
-  ✅ Data persists across refresh
-  ✅ Per-user isolation
-  ⚠️ Clearing localStorage deletes all data
-
---------------------------------------------------
-
-::DESIGN_HIGHLIGHTS::
-- CIH Bank visual identity
-- Light: pure white + soft shadows
-- Dark: deep slate + gradients
-- Smooth animations
-- Hover micro-interactions
-- Fully responsive layout
-
---------------------------------------------------
-
-::USAGE_TIPS::
-1. Login with mohamed / 1234
-2. Deposit salary into General Money
-3. Allocate funds to cards
-4. Log spendings inside card detail
-5. In Renting card → mark all tenants paid
-6. Send to owner when unlocked
-7. Toggle theme anytime
-
---------------------------------------------------
-
-::LICENSE::
-Educational demo.
-Not affiliated with CIH Bank Du Maroc.
-
---------------------------------------------------
-
-::AUTHOR_NOTE::
-Full-featured banking-style demo combining:
-- Authentication
-- State management
-- Data visualization
-- Rich UI interactions
-Delivered as a single static HTML file.
+### Access
+```
+http://localhost:5173
 ```
 
 ---
 
-If you’d like, I can now:
+## 🔑 Demo Accounts
 
-- 🔥 Convert it into a **compact AI-training format**
-- ⚙ Convert it into **JSON structured data**
-- 🧠 Convert it into a **knowledge-base optimized format**
-- 🧩 Create your own mini markup language**
-- 📦 Create a README-to-database schema version**
+| Username | Password |
+|----------|----------|
+| `admin` | `admin123` |
+| `user` | `user123` |
+| `mohamed` | `1234` |
 
-Just tell me the target use.
+---
+
+## 📁 Project Structure
+
+```
+📦 Project Root
+├── 📂 public/images/           # Generated images (logos, card art)
+├── 📂 src/
+│   ├── App.tsx                 # Root routing, session, theme
+│   ├── LoginPage.tsx           # Login + Register UI
+│   ├── Dashboard.tsx           # Main page (cards, money bar, chart)
+│   ├── CardDetail.tsx          # Card detail view
+│   ├── Card.tsx                # Reusable card component
+│   ├── database.ts             # Local "backend" (localStorage)
+│   ├── main.tsx                # Vite entry
+│   └── index.css               # Styles + animations
+├── index.html
+├── package.json
+├── vite.config.ts
+└── README.md
+```
+
+---
+
+## 🧠 How the "Backend" Works
+
+| Aspect | Implementation |
+|--------|----------------|
+| **Storage** | localStorage |
+| **Data Keys** | `cih_user_data_<username>` |
+| **Auth** | `authenticateUser`, `registerUser`, `getCurrentUser`, `setCurrentUser`, `logout` |
+| **Persistence** | All data survives refresh |
+| **Isolation** | Each user has separate state |
+
+**Pros:** ✅ Persists, ✅ Isolated, ✅ Zero infrastructure
+**Cons:** ⚠️ Cleared if localStorage wiped
+
+---
+
+## 🎨 Design Highlights
+
+- ✅ CIH Bank visual identity
+- ✅ Pure white light theme / Deep slate dark theme
+- ✅ Smooth fadeIn & slideUp animations
+- ✅ Hover micro-interactions
+- ✅ Fully responsive (mobile-friendly)
+
+---
+
+## 📱 Usage Tips
+
+| Step | Action |
+|------|--------|
+| 1 | Login with `mohamed` / `1234` |
+| 2 | Click "General Money" to deposit salary |
+| 3 | Use "Manage" to allocate to cards |
+| 4 | Click card to log spendings |
+| 5 | In Renting card: mark all 4 tenants paid |
+| 6 | Switch owners → watch Savings Analysis |
+| 7 | Toggle moon/sun for themes |
+
+---
+
+## 📝 License
+
+> Personal demonstration project. CIH Bank branding is for educational purposes only — not affiliated with CIH Bank Du Maroc.
+
+---
+
+## 👨‍💻 Credits
+
+Built with ❤️ — combining authentication, state management, data visualization, and rich interactions in a single static HTML file.
