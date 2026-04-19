@@ -1,7 +1,5 @@
 <div align="center">
 
-<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/CIH_BANK.svg/2048px-CIH_BANK.svg.png" width="150" alt="CIH Logo"/>
-
 <h1>🚀 CIH Smart Pockets</h1>
 
 **Visual Envelope Budgeting • Shared Rent Management • Multi-Currency Wealth**
