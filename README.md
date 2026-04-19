@@ -1,158 +1,96 @@
-Ahhhh ✅ now I fully understand you.
+<div align="center">
 
-You don’t want:
-- ❌ Long walls of text  
-- ❌ Big structured categories  
-- ❌ Boring documentation  
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/CIH_BANK.svg/2048px-CIH_BANK.svg.png" width="150" alt="CIH Logo"/>
 
-You want:
+<h1>🚀 CIH Smart Pockets</h1>
 
-> 📸 Visual documentation  
-> 🖼️ Screenshots  
-> 📊 Diagrams  
-> 🎯 Pictures that replace paragraphs  
+**Visual Envelope Budgeting • Shared Rent Management • Multi-Currency Wealth**
 
-That’s actually **much more professional**.
+[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](#)
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](#)
+[![Vite](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)](#)
+[![Tailwind](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](#)
 
----
+</div>
 
-# ✅ How To Replace Text With Visuals in README
+<br/>
 
-Instead of explaining everything in text, you show:
+## 🎯 4 Core Pillars
 
-- Dashboard screenshot
-- Card detail screenshot
-- Rental system screenshot
-- Charts screenshot
-- Theme comparison image
-- Flow diagram
+| 💳 **1. Purpose Cards** | 🏠 **2. Rent Manager** | 💱 **3. Global Wealth** | 👨‍👩‍👧 **4. Payroll system** |
+| :--- | :--- | :--- | :--- |
+| • Digital envelopes<br>• Custom icons & colors<br>• Isolated tracking<br>• Category analytics | • Track 4 tenants<br>• Auto-unlock rent payment<br>• Compare owner costs<br>• Track savings | • Live API rates<br>• Total MAD converter<br>• Crypto & Metals<br>• 7-day trend charts | • Family allowances<br>• Worker salaries<br>• Payment history<br>• Expense distributions |
 
----
+<br/>
 
-# 🔥 Example: Visual-First README Structure
+## 🗺️ App Architecture
 
-Instead of long descriptions like this:
+```mermaid
+graph TD;
+    Login[🔐 Login] --> Hub[🏠 Main Dashboard];
+    
+    Hub --> C[💳 Virtual Cards];
+    C --> Food[🍔 Food & Groceries];
+    C --> Rent[🏠 Shared Rent];
+    C --> Save[💰 Savings Goals];
+    C --> Subs[📺 Subscriptions];
+    C --> Custom[✨ Custom Cards];
 
-```
-This project is a modern personal finance management app...
-```
-
-You do this:
-
----
-
-# 💳 CIH Bank — Personal Money Manager
-
-### 🏠 Dashboard Overview
-![Dashboard Screenshot](./public/images/dashboard.png)
-
----
-
-### 💳 Card Detail View
-![Card Detail](./public/images/card-detail.png)
-
----
-
-### 📊 Live Consumption Chart
-![Chart](./public/images/chart.png)
-
----
-
-### 🏠 Rental Management System
-![Rental System](./public/images/rental.png)
-
----
-
-### 🌙 Light vs Dark Mode
-| Light Mode | Dark Mode |
-|------------|-----------|
-| ![Light](./public/images/light.png) | ![Dark](./public/images/dark.png) |
-
----
-
-See what happened?
-
-📉 80% less text  
-📸 More visual impact  
-🧠 Faster understanding  
-🚀 More professional  
-
----
-
-# ✅ What You Should Add
-
-Take screenshots of:
-
-1. ✅ Login page (light + dark)
-2. ✅ Dashboard
-3. ✅ Card detail
-4. ✅ Renting system
-5. ✅ Charts
-6. ✅ Delete confirmation modal
-7. ✅ Add card modal
-
-Then add them like:
-
-```markdown
-## 🚀 Live Demo Preview
-
-### Login
-![Login](./screenshots/login.png)
-
-### Dashboard
-![Dashboard](./screenshots/dashboard.png)
-
-### Card Detail
-![Card](./screenshots/card.png)
+    Hub --> N[🧭 Top Navigation];
+    N --> Family[👨‍👩‍👧 Family Board];
+    N --> Workers[👷 Workers Board];
+    N --> Exchange[💱 Exchange & Wealth];
+    N --> Profile[👤 Profile Settings];
 ```
 
----
+<br/>
 
-# ✅ Even Better: Use a GIF
+## 💸 Money Engine Flow
 
-Instead of explaining:
-
-> "Click card → open detail → add transaction → chart updates"
-
-Just record a 10-second GIF and add:
-
-```markdown
-![Demo GIF](./screenshots/demo.gif)
+```mermaid
+stateDiagram-v2
+    [*] --> GeneralMoney: 🏦 Income / Salary
+    GeneralMoney --> VirtualCard: 📥 Allocate Funds
+    VirtualCard --> GeneralMoney: 📤 Refund
+    VirtualCard --> Spending: 💸 Log Transaction
+    Spending --> Catalog: 📜 Save to History
+    Catalog --> LiveChart: 📊 Auto-Update Donut Charts
 ```
 
-One GIF replaces 5 paragraphs.
+<br/>
 
----
+## 🏠 Shared Rent Logic
 
-# ✅ Professional README Pattern (Modern Projects Use This)
+```mermaid
+sequenceDiagram
+    participant T as 👥 4 Tenants
+    participant C as 💳 Rent Card
+    participant L as 🏠 Landlord
 
-1. Hero screenshot at top
-2. Small feature bullet list
-3. GIF demo
-4. Tech stack
-5. Installation
+    T->>C: Pay Share (Youssef ✓)
+    T->>C: Pay Share (Karim ✓)
+    T->>C: Pay Share (Leila ✓)
+    T->>C: Pay Share (Omar ✓)
+    
+    Note over C: 🔓 "Send Rent" Button Unlocks
+    
+    C->>L: 💸 Transfer Total Rent
+    Note over C: 🔄 Tenants reset to unpaid for next month
+```
 
-That’s it.
+<br/>
 
-Minimal text.
-Maximum visuals.
+## ⚡ Quick Start
 
----
+```bash
+# 1. Install dependencies
+npm install
 
-# 🎯 If You Want
+# 2. Start local server
+npm run dev
+```
 
-I can:
-
-- ✅ Rewrite your README to be **90% visual**
-- ✅ Tell you exactly which screenshots to take
-- ✅ Design a professional layout structure
-- ✅ Show you how to create animated GIF demo
-- ✅ Help generate UI mock preview images
-
-Tell me:
-Do you want it to look like:
-- 🔥 Startup landing page style?
-- 🧑‍💻 Clean GitHub open-source style?
-- 🏦 Banking product presentation style?
-
-I’ll design the perfect visual README structure for your app.
+| 👤 User | 🔑 Password |
+| :--- | :--- |
+| `admin` | `admin123` |
+| `mohamed` | `1234` |
